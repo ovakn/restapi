@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -46,7 +48,8 @@ public class Game {
     @Column
     boolean isBought = false;
 
-    public Game(String name, int price, String developer, String publisher, int quantity, int releaseYear, String genre, String series) {
+    public Game(String name, int price, String developer, String publisher, int quantity, int releaseYear,
+                String genre, String series) {
         this.name = name;
         this.price = price;
         this.developer = developer;
@@ -59,7 +62,11 @@ public class Game {
         }
         this.releaseYear = releaseYear;
         this.genre = genre;
-        this.series = series;
+        if (Objects.equals(series, "")) {
+            this.series = "-";
+        } else {
+            this.series = series;
+        }
     }
 
     @Override

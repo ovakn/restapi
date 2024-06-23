@@ -20,7 +20,7 @@ public class SwaggerConfig {
                 .info(
                         new Info()
                                 .title("Магазин игр")
-                                .summary("API для работы магазина с БД")
+                                .description("API для работы магазина с БД")
                 );
     }
 }

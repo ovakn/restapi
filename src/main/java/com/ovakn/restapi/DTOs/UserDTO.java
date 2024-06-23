@@ -8,13 +8,5 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class GameDTO {
-    String name;
-    int price;
-    String developer;
-    String publisher;
-    int quantity;
-    int releaseYear;
-    String genre;
-    String series = "-";
+public class UserDTO {
 }
