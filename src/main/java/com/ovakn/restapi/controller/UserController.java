@@ -99,6 +99,27 @@ public class UserController {
         return message;
     }
 
+    @Operation(summary = "Обновление сведений о пользователе",
+            description = "Получает обновлённые сведения вместе со старым email, проводит по нему поиск и обновляет запись")
+    @PutMapping("api/user/update")
+    public String updatingUser(@RequestBody UserDTO userDTO, @RequestParam String oldEmail) {
+        User oldUser = userRep.findByEmail(oldEmail);
+        if (oldUser != null) {
+            User updatedUser = new User(
+                    oldUser.getId(),
+                    userDTO.getName(),
+                    userDTO.getEmail(),
+                    oldUser.getBalance()
+            );
+            userRep.save(updatedUser);
+            message = "Данные о пользователе успешно обновлены";
+        } else {
+            message = "Не найдено пользователя с таким email";
+        }
+        log.info(message);
+        return message;
+    }
+
     @Operation(summary = "Пополнение баланса пользователя",
             description = "Ищет в БД пользователя по переданным имени и email и добавляет к балансу переданное int-значение")
     @PutMapping("api/user/topUp")

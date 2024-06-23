@@ -2,7 +2,9 @@ package com.ovakn.restapi.controller;
 
 import com.ovakn.restapi.DTOs.GameDTO;
 import com.ovakn.restapi.entity.Game;
+import com.ovakn.restapi.entity.Purchase;
 import com.ovakn.restapi.repository.GameRep;
+import com.ovakn.restapi.repository.PurchasesRep;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
@@ -22,6 +24,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdminController {
     final GameRep gameRep;
+    final PurchasesRep purchasesRep;
     String message;
 
     @Operation(summary = "Отображение списка игр",
@@ -36,6 +39,13 @@ public class AdminController {
     @GetMapping("api/game/getByID")
     public Game gettingGameByID(@RequestParam int id) {
         return gameRep.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @Operation(summary = "Отображение списка всех покупок",
+            description = "Возвращает все записи о совершённых покупках из БД")
+    @GetMapping("api/purchases/getAll")
+    public List<Purchase> gettingPurchasesList() {
+        return purchasesRep.findAll();
     }
 
     @Operation(summary = "Добавление игры в БД",
@@ -76,10 +86,10 @@ public class AdminController {
                     gameDTO.getGenre(),
                     gameDTO.getSeries()
             );
-            message = new StringBuilder()
-                    .append("Предыдущая запись: \n" + oldGame + "\n")
-                    .append("Обновлённая запись: \n" + gameRep.save(newGame))
-                    .toString();
+            message = "Предыдущая запись: \n"
+                    + oldGame
+                    + "\nОбновлённая запись: \n"
+                    + gameRep.save(newGame);
         } else {
             message = "Не найдено записи об игре с таким названием";
         }
