@@ -3,7 +3,6 @@ package com.ovakn.restapi.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 import java.util.Objects;
 
 @Getter
@@ -45,9 +44,6 @@ public class Game {
     @Column
     String series = "-";
 
-    @Column
-    boolean isBought = false;
-
     public Game(String name, int price, String developer, String publisher, int quantity, int releaseYear,
                 String genre, String series) {
         this.name = name;
@@ -82,7 +78,6 @@ public class Game {
                 ", releaseYear=" + releaseYear +
                 ", genre='" + genre + '\'' +
                 ", series='" + series + '\'' +
-                ", isBought=" + isBought +
                 '}';
     }
 }

@@ -14,5 +14,4 @@ public interface GameRep extends JpaRepository<Game, Integer> {
     List<Game> findBySeries(String series);
     List<Game> findByAvailability(String availability);
     List<Game> findByReleaseYear(int releaseYear);
-    List<Game> findByIsBought(boolean isBought);
 }

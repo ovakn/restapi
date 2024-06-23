@@ -74,8 +74,7 @@ public class AdminController {
                     gameDTO.getQuantity(),
                     gameDTO.getReleaseYear(),
                     gameDTO.getGenre(),
-                    gameDTO.getSeries(),
-                    oldGame.isBought()
+                    gameDTO.getSeries()
             );
             message = new StringBuilder()
                     .append("Предыдущая запись: \n" + oldGame + "\n")
@@ -88,12 +87,12 @@ public class AdminController {
         return message;
     }
 
-    @Operation(summary = "",
-            description = "")
+    @Operation(summary = "Удаляет игру",
+            description = "Получает ID игры и удаляет запись с ней из БД")
     @DeleteMapping("api/game/delete")
     public String deletingGameByID(@RequestParam int id) {
         gameRep.deleteById(id);
-        message = "Запись о книге успешно удалена";
+        message = "Запись об игре успешно удалена";
         log.info(message);
         return message;
     }

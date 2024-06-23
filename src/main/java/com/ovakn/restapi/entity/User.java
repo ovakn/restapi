@@ -16,12 +16,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column
+    @Column(unique = true)
     String name;
 
-    @Column
+    @Column(unique = true)
     String email;
 
     @Column
-    int balance;
+    int balance = 0;
+
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
 }
