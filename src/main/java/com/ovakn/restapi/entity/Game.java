@@ -35,7 +35,7 @@ public class Game {
     @Column
     int quantity;
 
-    @Column(nullable = false)
+    @Column(name = "release_year", nullable = false)
     int releaseYear;
 
     @Column

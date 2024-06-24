@@ -41,13 +41,12 @@ public class Purchase {
 
     @Override
     public String toString() {
-        return "Purchase{" +
+        return "Purchase:\n" +
                 "id=" + id +
-                ", userName='" + userName + '\'' +
-                ", gameId=" + gameId +
-                ", gameName='" + gameName + '\'' +
-                ", userEmail='" + userEmail + '\'' +
-                ", purchaseDate=" + purchaseDate +
-                '}';
+                "\nuserName='" + userName + '\'' +
+                "\ngameId=" + gameId +
+                "\ngameName='" + gameName + '\'' +
+                "\nuserEmail='" + userEmail + '\'' +
+                "\npurchaseDate=" + purchaseDate;
     }
 }

@@ -7,9 +7,11 @@ import com.ovakn.restapi.entity.User;
 import com.ovakn.restapi.repository.GameRep;
 import com.ovakn.restapi.repository.PurchasesRep;
 import com.ovakn.restapi.repository.UserRep;
+import com.ovakn.restapi.service.MailSenderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -17,18 +19,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 @Tag(name = "UserController",
         description = "Контроллер для взаимодействия с БД со стороны пользователя приложения")
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserController {
     final GameRep gameRep;
     final UserRep userRep;
     final PurchasesRep purchasesRep;
+    MailSenderService mailSender;
     String message;
+
+    public UserController(GameRep gameRep, UserRep userRep, PurchasesRep purchasesRep, MailSenderService mailSender) {
+        this.gameRep = gameRep;
+        this.userRep = userRep;
+        this.purchasesRep = purchasesRep;
+        this.mailSender = mailSender;
+    }
 
     @Operation(summary = "Покупка игры",
             description = "Получает ID игры и DTO пользователя. Если эти пользователь и игра присутствуют в БД, то проводит покупку")
@@ -46,13 +56,22 @@ public class UserController {
                             user.getEmail()
                     );
                     if (user.getBalance() > game.getPrice()) {
-                        user.setBalance(user.getBalance() - game.getPrice());
-                        userRep.save(user);
-                        purchasesRep.save(purchase);
-                        message = "Данные о покупке игры сохранены:\n"
-                                + purchase.toString()
-                                + "\nБаланс пользователя после покупки: "
-                                + user.getBalance();
+                        if (game.getQuantity() > 0) {
+                            user.setBalance(user.getBalance() - game.getPrice());
+                            userRep.save(user);
+                            purchasesRep.save(purchase);
+                            message = "Данные о покупке игры сохранены и будут отправлены на почту пользователя\n"
+                                    + "\nБаланс пользователя после покупки: "
+                                    + user.getBalance();
+                            game.setQuantity(game.getQuantity() - 1);
+                            if (game.getQuantity() == 0) {
+                                game.setAvailability("Нет");
+                            }
+                            gameRep.save(game);
+                            mailSender.send(userDTO.getEmail(), "", purchase.toString());
+                        } else {
+                            message = "К сожалению, этой игры нет в наличии";
+                        }
                     } else {
                         message = "Средств на балансе пользователя недостаточно";
                     }
@@ -73,9 +92,18 @@ public class UserController {
             description = "Получает имя и email пользователя в виде DTO и добавляет запись о нём в БД")
     @PostMapping("api/user/register")
     public String registeringUser(@RequestBody UserDTO userDTO) {
-        User user = new User(userDTO.getName(), userDTO.getEmail());
-        userRep.save(user);
-        message = "Успешно зарегистрирован новый пользователь";
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."
+                + "[a-zA-Z0-9_+&*-]+)*@"
+                + "(?:[a-zA-Z0-9-]+\\.)+[a-z"
+                + "A-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        if (pattern.matcher(userDTO.getEmail()).matches()) {
+            User user = new User(userDTO.getName(), userDTO.getEmail());
+            userRep.save(user);
+            message = "Успешно зарегистрирован новый пользователь";
+        } else {
+            message = "Передано недействительное значение email";
+        }
         log.info(message);
         return message;
     }

@@ -5,6 +5,7 @@ import com.ovakn.restapi.entity.Game;
 import com.ovakn.restapi.entity.Purchase;
 import com.ovakn.restapi.repository.GameRep;
 import com.ovakn.restapi.repository.PurchasesRep;
+import com.ovakn.restapi.service.MailSenderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
