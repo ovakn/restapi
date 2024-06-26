@@ -11,8 +11,6 @@ import com.ovakn.restapi.service.MailSenderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,7 +28,7 @@ public class UserController {
     final GameRep gameRep;
     final UserRep userRep;
     final PurchasesRep purchasesRep;
-    MailSenderService mailSender;
+    final MailSenderService mailSender;
     String message;
 
     public UserController(GameRep gameRep, UserRep userRep, PurchasesRep purchasesRep, MailSenderService mailSender) {
@@ -68,7 +66,12 @@ public class UserController {
                                 game.setAvailability("Нет");
                             }
                             gameRep.save(game);
-                            mailSender.send(userDTO.getEmail(), "", purchase.toString());
+                            mailSender.send(
+                                    userDTO.getEmail(),
+                                    "Информация о совершённой покупке",
+                                    "Здраствуйте, " + user.getName() + ". Благодарим Вас за совершённую покупку\n"
+                                            + "Информация о покупке:\n" + purchase.toString()
+                            );
                         } else {
                             message = "К сожалению, этой игры нет в наличии";
                         }
